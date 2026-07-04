@@ -1,8 +1,8 @@
-// 1. DYNAMIC DATABASE: Load existing users from browser memory, or start empty
+// 1. STATE INSTANTIATION (Dynamic Memory Database Arrays)
 let users = JSON.parse(localStorage.getItem('users')) || [];
-let currentUser = null; // Stores the currently logged-in user session
+let currentUser = null; 
 
-// 2. INTERFACE MANAGER: Switches between Sign In and Sign Up forms
+// 2. VIEW SWAP CONTROLLER: Controls visibility toggles for authentication forms
 function showAuthForm(formType) {
     const loginForm = document.getElementById('login-form');
     const registerForm = document.getElementById('register-form');
@@ -16,72 +16,129 @@ function showAuthForm(formType) {
     }
 }
 
-// 3. REGISTRATION CONTROLLER: Saves new accounts dynamically
+// 3. REGISTRATION MODULE: Captures and saves user models dynamically
 function handleRegister(event) {
-    event.preventDefault(); // Prevents the browser from refreshing the page
+    event.preventDefault(); 
 
     const empId = document.getElementById('reg-id').value;
     const email = document.getElementById('reg-email').value;
     const password = document.getElementById('reg-password').value;
     const role = document.getElementById('reg-role').value;
 
-    // Validation: Prevent duplicate accounts
     const userExists = users.some(user => user.email === email || user.empId === empId);
     if (userExists) {
-        alert("An account with this Email or Employee ID already exists!");
+        alert("Registration Failed: Duplicate account parameters identified.");
         return;
     }
 
-    // Creating a fresh, dynamic user profile object
     const newUser = {
         empId: empId,
         email: email,
         password: password,
         role: role,
+        phone: "",       
+        address: "",     
         attendance: [], 
         leaves: []      
     };
 
-    // Push the new user to our array and update browser's localStorage database
     users.push(newUser);
     localStorage.setItem('users', JSON.stringify(users));
 
     alert("Registration Successful! Please Sign In.");
-    event.target.reset(); // Clears form inputs
-    showAuthForm('login'); // Shifts view to login automatically
+    event.target.reset(); 
+    showAuthForm('login'); 
 }
 
-// 4. LOGIN CONTROLLER: Validates credentials and routes roles
+// 4. GATEWAY ROUTER CONTROLLER: Validates profiles and instantiates dashboard layouts
 function handleLogin(event) {
     event.preventDefault(); 
 
     const email = document.getElementById('login-email').value;
     const password = document.getElementById('login-password').value;
 
-    // Scan database array for matching user credentials
     const matchedUser = users.find(user => user.email === email && user.password === password);
 
     if (!matchedUser) {
-        alert("Invalid Email or Password!");
+        alert("Authentication Error: Invalid email or password credentials.");
         return;
     }
 
-    // Set the session state to the logged-in user
     currentUser = matchedUser;
-
-    // Hide Login Panel
     document.getElementById('auth-container').style.display = 'none';
 
-    // Role-Based Access Control Rule
+    // 3.2 Route the views to display their complete data grids
     if (currentUser.role === "Admin") {
         document.getElementById('admin-container').style.display = 'block';
+        renderAdminDashboard(); 
     } else {
         document.getElementById('employee-container').style.display = 'block';
-        document.getElementById('emp-welcome-name').innerText = currentUser.empId;
+        renderEmployeeDashboard(); 
     }
 }
 
-// 5. SESSION TERMINATION: Safe Logout
+// 5. 3.2.1 EMPLOYEE VIEW RENDERING DATA LAYERS
+function renderEmployeeDashboard() {
+    if (!currentUser) return;
+
+    // Set greeting strings
+    document.getElementById('emp-welcome-name').innerText = currentUser.empId;
+    
+    // Mount profile data references onto form controls (Section 3.3 elements)
+    document.getElementById('prof-id').innerText = currentUser.empId;
+    document.getElementById('prof-email').innerText = currentUser.email;
+    document.getElementById('prof-phone').value = currentUser.phone || "";
+    document.getElementById('prof-address').value = currentUser.address || "";
+}
+
+// 6. 3.2.2 HR ADMIN VIEW RENDERING DATA LAYERS
+function renderAdminDashboard() {
+    const listContainer = document.getElementById('admin-employee-list');
+    listContainer.innerHTML = ""; 
+
+    const employeeOnlyList = users.filter(user => user.role === "Employee");
+    
+    // Set total count metric
+    document.getElementById('admin-total-staff-count').innerText = employeeOnlyList.length;
+
+    if (employeeOnlyList.length === 0) {
+        listContainer.innerHTML = "<p class='no-data'>No employee user profiles registered within the system directory.</p>";
+        return;
+    }
+
+    employeeOnlyList.forEach(emp => {
+        const row = document.createElement('div');
+        row.className = "management-row-card";
+        row.innerHTML = `
+            <div class="row-info">
+                <p><strong>Staff ID:</strong> ${emp.empId} | <strong>Email:</strong> ${emp.email}</p>
+                <p class="sub-text">Phone: ${emp.phone || "Not Specified"} | Address: ${emp.address || "Not Specified"}</p>
+            </div>
+        `;
+        listContainer.appendChild(row);
+    });
+}
+
+// 7. PROFILE INTERACTION HANDLING (Section 3.3)
+function updateEmployeeProfile(event) {
+    event.preventDefault();
+
+    const updatedPhone = document.getElementById('prof-phone').value;
+    const updatedAddress = document.getElementById('prof-address').value;
+
+    currentUser.phone = updatedPhone;
+    currentUser.address = updatedAddress;
+
+    const index = users.findIndex(user => user.empId === currentUser.empId);
+    if (index !== -1) {
+        users[index] = currentUser;
+        localStorage.setItem('users', JSON.stringify(users)); 
+        alert("Personal profile modifications successfully saved!");
+        renderEmployeeDashboard(); 
+    }
+}
+
+// 8. SESSION TERMINATION
 function logout() {
     currentUser = null;
     document.getElementById('employee-container').style.display = 'none';

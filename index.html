@@ -3,21 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Odoo HRMS Portal</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <!-- 1. AUTHENTICATION SECTION -->
+
     <div id="auth-container" class="container">
         <h2>Welcome to HRMS Portal</h2>
-        
-        <!-- Toggle Buttons -->
         <div class="toggle-buttons">
             <button onclick="showAuthForm('login')">Sign In</button>
             <button onclick="showAuthForm('register')">Sign Up</button>
         </div>
 
-        <!-- Login Form -->
         <form id="login-form" onsubmit="handleLogin(event)">
             <h3>Sign In</h3>
             <input type="email" id="login-email" placeholder="Email Address" required>
@@ -25,7 +22,6 @@
             <button type="submit">Login</button>
         </form>
 
-        <!-- Register Form -->
         <form id="register-form" onsubmit="handleRegister(event)" style="display: none;">
             <h3>Sign Up</h3>
             <input type="text" id="reg-id" placeholder="Employee ID" required>
@@ -39,24 +35,66 @@
         </form>
     </div>
 
-    <!-- 2. EMPLOYEE DASHBOARD -->
     <div id="employee-container" class="container" style="display: none;">
         <div class="header">
-            <h2>Employee Portal</h2>
+            <h2>Employee Workspace</h2>
             <button onclick="logout()" class="logout-btn">Logout</button>
         </div>
-        <p>Welcome back, <span id="emp-welcome-name">Employee</span>!</p>
-        <!-- Rest of features will go here -->
+        <p class="welcome-banner">Welcome, <span id="emp-welcome-name"></span></p>
+
+        <div class="dashboard-grid">
+            <div class="card metric-card">
+                <h4>Attendance Status</h4>
+                <p id="dash-attendance-status" class="badge text-neutral">Not Checked In</p>
+            </div>
+            <div class="card metric-card">
+                <h4>Available Leave Balance</h4>
+                <p id="dash-leave-balance" class="badge text-primary">12 Days Remaining</p>
+            </div>
+        </div>
+
+        <div class="card main-content-card">
+            <h3>My Profile Details</h3>
+            <hr>
+            <div class="profile-details-display">
+                <p><strong>Employee ID Reference:</strong> <span id="prof-id"></span></p>
+                <p><strong>Registered Corporate Email:</strong> <span id="prof-email"></span></p>
+            </div>
+            
+            <form id="emp-profile-form" onsubmit="updateEmployeeProfile(event)">
+                <div class="input-group">
+                    <label for="prof-phone">Mobile Phone Number:</label>
+                    <input type="text" id="prof-phone" placeholder="No phone number stored">
+                </div>
+                <div class="input-group">
+                    <label for="prof-address">Residential Address:</label>
+                    <input type="text" id="prof-address" placeholder="No home address stored">
+                </div>
+                <button type="submit" class="action-btn">Save Local Modifications</button>
+            </form>
+        </div>
     </div>
 
-    <!-- 3. ADMIN DASHBOARD -->
     <div id="admin-container" class="container" style="display: none;">
         <div class="header">
             <h2>Admin / HR Control Center</h2>
             <button onclick="logout()" class="logout-btn">Logout</button>
         </div>
-        <p>Welcome back, Administrator.</p>
-        <!-- Rest of features will go here -->
+        <p class="welcome-banner">Welcome back, Corporate Administrator.</p>
+
+        <div class="dashboard-grid">
+            <div class="card info-box">
+                <h3>Total Staff</h3>
+                <p id="admin-total-staff-count" class="big-metric">0</p>
+            </div>
+        </div>
+
+        <div class="card main-content-card">
+            <h3>Staff Operational Overview Directory</h3>
+            <hr>
+            <div id="admin-employee-list" class="dynamic-list-viewport">
+                </div>
+        </div>
     </div>
 
     <script src="script.js"></script>
