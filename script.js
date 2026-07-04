@@ -1,193 +1,184 @@
-// 1. STATE INSTANTIATION (Dynamic Memory Database Arrays)
-let users = JSON.parse(localStorage.getItem('users')) || [];
-let currentUser = null; 
-
-// 2. VIEW SWAP CONTROLLER: Controls visibility toggles for authentication forms
-function showAuthForm(formType) {
-    const loginForm = document.getElementById('login-form');
-    const registerForm = document.getElementById('register-form');
-
-    if (formType === 'login') {
-        loginForm.style.display = 'block';
-        registerForm.style.display = 'none';
-    } else {
-        loginForm.style.display = 'none';
-        registerForm.style.display = 'block';
-    }
+// --- CENTRAL LOCAL STORAGE INITIALIZATION ENGINE ---
+if (!localStorage.getItem('hrms_users')) {
+    localStorage.setItem('hrms_users', JSON.stringify([
+        { email: "emp@odoo.com", password: "Password123", role: "Employee", empId: "EMP01" },
+        { email: "hr@odoo.com", password: "Password123", role: "HR", empId: "HR01" }
+    ]));
+}
+if (!localStorage.getItem('hrms_attendance')) {
+    localStorage.setItem('hrms_attendance', JSON.stringify([]));
 }
 
-// 3. REGISTRATION MODULE: Captures and saves user models dynamically
-function handleRegister(event) {
-    event.preventDefault(); 
+let isSignUpMode = false;
+let currentUser = null;
 
-    const empId = document.getElementById('reg-id').value;
-    const email = document.getElementById('reg-email').value;
-    const password = document.getElementById('reg-password').value;
-    const role = document.getElementById('reg-role').value;
+// Element Layout Selectors Matrix
+const UI = {
+    authSection: document.getElementById('authSection'),
+    employeeDashboard: document.getElementById('employeeDashboard'),
+    adminDashboard: document.getElementById('adminDashboard'),
+    authForm: document.getElementById('authForm'),
+    authTitle: document.getElementById('authTitle'),
+    authBtn: document.getElementById('authBtn'),
+    toggleLink: document.getElementById('toggleAuthLink'),
+    empIdGroup: document.getElementById('empIdGroup'),
+    roleGroup: document.getElementById('roleGroup'),
+    userStatus: document.getElementById('userStatus'),
+    empEmailDisplay: document.getElementById('empEmailDisplay'),
+    todayStatus: document.getElementById('todayStatus'),
+    checkInBtn: document.getElementById('checkInBtn'),
+    checkOutBtn: document.getElementById('checkOutBtn'),
+    myAttendanceTable: document.getElementById('myAttendanceTable'),
+    adminAttendanceTable: document.getElementById('adminAttendanceTable')
+};
 
-    const userExists = users.some(user => user.email === email || user.empId === empId);
-    if (userExists) {
-        alert("Registration Failed: Duplicate account parameters identified.");
-        return;
+// Interface Switcher (Sign In vs Sign Up Screen)
+UI.toggleLink.addEventListener('click', () => {
+    isSignUpMode = !isSignUpMode;
+    UI.authTitle.innerText = isSignUpMode ? "Register Account" : "Sign In";
+    UI.authBtn.innerText = isSignUpMode ? "Sign Up" : "Sign In";
+    UI.empIdGroup.style.display = isSignUpMode ? "block" : "none";
+    UI.roleGroup.style.display = isSignUpMode ? "block" : "none";
+    clearValidationEffects();
+});
+
+// Input Validator Framework
+function runInputValidation(email, password, empId) {
+    let isValid = true;
+    clearValidationEffects();
+
+    const emailFormat = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailFormat.test(email)) {
+        triggerFieldInvalid('email', 'Please provide a valid corporate email structure.');
+        isValid = false;
     }
-
-    const newUser = {
-        empId: empId,
-        email: email,
-        password: password,
-        role: role,
-        fullName: "Employee " + empId,
-        jobTitle: "Junior Associate",
-        department: "Operations",  
-        baseSalary: "35000",  
-        allowance: "5000",  
-        profilePic: "https://via.placeholder.com/150",
-        phone: "",       
-        address: "",     
-        attendance: [], 
-        leaves: []      
-    };
-
-    users.push(newUser);
-    localStorage.setItem('users', JSON.stringify(users));
-
-    alert("Registration Successful! Please Sign In.");
-    event.target.reset(); 
-    showAuthForm('login'); 
+    if (password.length < 5) {
+        triggerFieldInvalid('password', 'Security rule: Minimum 5 characters required.');
+        isValid = false;
+    }
+    if (isSignUpMode && !empId.trim()) {
+        triggerFieldInvalid('empId', 'Operational rule: Employee ID is mandatory.');
+        isValid = false;
+    }
+    return isValid;
 }
 
-// 4. GATEWAY ROUTER CONTROLLER: Validates profiles and instantiates dashboard layouts
-function handleLogin(event) {
-    event.preventDefault(); 
-
-    const email = document.getElementById('login-email').value;
-    const password = document.getElementById('login-password').value;
-
-    const matchedUser = users.find(user => user.email === email && user.password === password);
-
-    if (!matchedUser) {
-        alert("Authentication Error: Invalid email or password credentials.");
-        return;
-    }
-
-    currentUser = matchedUser;
-    document.getElementById('auth-container').style.display = 'none';
-
-    // 3.2 Route the views to display their complete data grids
-    if (currentUser.role === "Admin") {
-        document.getElementById('admin-container').style.display = 'block';
-        renderAdminDashboard(); 
-    } else {
-        document.getElementById('employee-container').style.display = 'block';
-        renderEmployeeDashboard(); 
-    }
+function triggerFieldInvalid(fieldId, msg) {
+    document.getElementById(fieldId).classList.add('invalid');
+    document.getElementById(`${fieldId}Error`).innerText = msg;
 }
 
-function renderEmployeeDashboard() {
-    if (!currentUser) return;
-
-    // Set layout greeting banner text
-    document.getElementById('emp-welcome-name').innerText = currentUser.fullName || currentUser.empId;
-    
-    // Bind all the new Section 3.3 profile requirements to the text containers
-    document.getElementById('prof-name').innerText = currentUser.fullName || "Not Specified";
-    document.getElementById('prof-id').innerText = currentUser.empId;
-    document.getElementById('prof-email').innerText = currentUser.email;
-    document.getElementById('prof-job').innerText = currentUser.jobTitle || "Not Specified";
-    document.getElementById('prof-dept').innerText = currentUser.department || "Not Specified";
-    document.getElementById('prof-base-salary').innerText = currentUser.baseSalary || "0";
-    document.getElementById('prof-allowance').innerText = currentUser.allowance || "0";
-    
-    // Set editable components
-    document.getElementById('prof-phone').value = currentUser.phone || "";
-    document.getElementById('prof-address').value = currentUser.address || "";
-    document.getElementById('prof-pic-url').value = currentUser.profilePic || "";
-    document.getElementById('prof-pic-display').src = currentUser.profilePic || "https://via.placeholder.com/150";
-}
-
-// Quick image URL visual display trigger helper
-function previewProfilePicture() {
-    const url = document.getElementById('prof-pic-url').value;
-    document.getElementById('prof-pic-display').src = url || "https://via.placeholder.com/150";
-}
-// 6. 3.2.2 HR ADMIN VIEW RENDERING DATA LAYERS
-function renderAdminDashboard() {
-    const listContainer = document.getElementById('admin-employee-list');
-    listContainer.innerHTML = ""; 
-
-    const employeeOnlyList = users.filter(user => user.role === "Employee");
-    
-    // Set total count metric
-    document.getElementById('admin-total-staff-count').innerText = employeeOnlyList.length;
-
-    if (employeeOnlyList.length === 0) {
-        listContainer.innerHTML = "<p class='no-data'>No employee user profiles registered within the system directory.</p>";
-        return;
-    }
-
-    employeeOnlyList.forEach(emp => {
-        const row = document.createElement('div');
-        row.className = "management-row-card";
-        row.innerHTML = `
-            <div class="row-info">
-                <p><strong>Staff ID:</strong> ${emp.empId} | <strong>Email:</strong> ${emp.email}</p>
-                <p class="sub-text">Phone: ${emp.phone || "Not Specified"} | Address: ${emp.address || "Not Specified"}</p>
-            </div>
-            <div class="admin-edit-controls">
-                <input type="text" id="admin-phone-${emp.empId}" placeholder="Modify Phone" value="${emp.phone || ""}">
-                <input type="text" id="admin-address-${emp.empId}" placeholder="Modify Address" value="${emp.address || ""}">
-                <button onclick="adminModifyUser('${emp.empId}')" class="admin-action-btn">Force Update</button>
-            </div>
-        `;
-        listContainer.appendChild(row);
+function clearValidationEffects() {
+    ['email', 'password', 'empId'].forEach(id => {
+        const inputField = document.getElementById(id);
+        if (inputField) inputField.classList.remove('invalid');
+        const textLabel = document.getElementById(`${id}Error`);
+        if (textLabel) textLabel.innerText = '';
     });
 }
 
-// 7. PROFILE INTERACTION HANDLING (Section 3.3)
-function updateEmployeeProfile(event) {
-    event.preventDefault();
+// Session Authentication Form Submission
+UI.authForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+    const role = UI.roleGroup.querySelector('select').value;
+    const empId = document.getElementById('empId').value.trim();
 
-    const updatedPhone = document.getElementById('prof-phone').value;
-    const updatedAddress = document.getElementById('prof-address').value;
-    const updatedProfilePic = document.getElementById('prof-pic-url').value;
+    if (!runInputValidation(email, password, empId)) return;
 
-    currentUser.phone = updatedPhone;
-    currentUser.address = updatedAddress;
-    currentUser.profilePic = updatedProfilePic;
+    let dbUsers = JSON.parse(localStorage.getItem('hrms_users'));
 
-    const index = users.findIndex(user => user.empId === currentUser.empId);
-    if (index !== -1) {
-        users[index] = currentUser;
-        localStorage.setItem('users', JSON.stringify(users)); 
-        alert("Personal profile modifications successfully saved!");
-        renderEmployeeDashboard(); 
+    if (isSignUpMode) {
+        if (dbUsers.some(u => u.email === email)) {
+            triggerFieldInvalid('email', 'This email identity matches an existing profile.');
+            return;
+        }
+        dbUsers.push({ email, password, role, empId });
+        localStorage.setItem('hrms_users', JSON.stringify(dbUsers));
+        alert("Registration successfully stored! Switching to login view.");
+        UI.toggleLink.click();
+    } else {
+        const verifiedProfile = dbUsers.find(u => u.email === email && u.password === password);
+        if (verifiedProfile) {
+            currentUser = verifiedProfile;
+            UI.userStatus.innerText = `Active Session: ${currentUser.email}`;
+            UI.authSection.style.display = "none";
+            
+            if (currentUser.role === "Employee") {
+                launchEmployeeView();
+            } else {
+                launchAdminView();
+            }
+        } else {
+            alert("Security exception: Access denied. Verification mismatch.");
+        }
     }
+});
+
+// Logout Reset Module
+document.querySelectorAll('.logoutBtn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        currentUser = null;
+        UI.userStatus.innerText = "Not logged in";
+        UI.employeeDashboard.style.display = "none";
+        UI.adminDashboard.style.display = "none";
+        UI.authSection.style.display = "block";
+        UI.authForm.reset();
+        clearValidationEffects();
+    });
+});
+
+// Employee Workspace Execution
+function launchEmployeeView() {
+    UI.employeeDashboard.style.display = "block";
+    UI.empEmailDisplay.innerText = currentUser.email;
+    renderEmployeeLogs();
 }
 
-// 8. SESSION TERMINATION
-function logout() {
-    currentUser = null;
-    document.getElementById('employee-container').style.display = 'none';
-    document.getElementById('admin-container').style.display = 'none';
-    document.getElementById('auth-container').style.display = 'block';
-}
-// 9. ADMIN PROFILE OVERRIDEPRIVILEGES (Section 3.3.2)
-function adminModifyUser(empId) {
-    const newPhone = document.getElementById(`admin-phone-${empId}`).value;
-    const newAddress = document.getElementById(`admin-address-${empId}`).value;
+UI.checkInBtn.addEventListener('click', () => {
+    const todayStr = new Date().toISOString().split('T')[0];
+    let attendanceLogs = JSON.parse(localStorage.getItem('hrms_attendance'));
+    
+    attendanceLogs.push({
+        date: todayStr,
+        status: "Present",
+        empId: currentUser.empId || "N/A",
+        email: currentUser.email
+    });
+    
+    localStorage.setItem('hrms_attendance', JSON.stringify(attendanceLogs));
+    UI.todayStatus.innerText = "Present";
+    UI.todayStatus.className = "status-badge present";
+    UI.checkInBtn.disabled = true;
+    UI.checkOutBtn.disabled = false;
+    renderEmployeeLogs();
+});
 
-    // Find the targeted employee in the database array
-    const index = users.findIndex(user => user.empId === empId);
-    if (index !== -1) {
-        // Apply the Admin's forced changes
-        users[index].phone = newPhone;
-        users[index].address = newAddress;
-        
-        // Save back to browser disk storage
-        localStorage.setItem('users', JSON.stringify(users));
-        alert(`Administrative Override: Profile for Staff ID ${empId} has been updated.`);
-        
-        // Refresh the admin interface to show the new changes immediately
-        renderAdminDashboard();
-    }
+function renderEmployeeLogs() {
+    UI.myAttendanceTable.innerHTML = "";
+    let attendanceLogs = JSON.parse(localStorage.getItem('hrms_attendance'));
+    const matchedLogs = attendanceLogs.filter(log => log.email === currentUser.email);
+    
+    matchedLogs.forEach(item => {
+        UI.myAttendanceTable.innerHTML += `<tr>
+            <td>${item.date}</td>
+            <td><span class="status-badge present">${item.status}</span></td>
+        </tr>`;
+    });
+}
+
+// Admin Workspace Execution
+function launchAdminView() {
+    UI.adminDashboard.style.display = "block";
+    UI.adminAttendanceTable.innerHTML = "";
+    let attendanceLogs = JSON.parse(localStorage.getItem('hrms_attendance'));
+    
+    attendanceLogs.forEach(item => {
+        UI.adminAttendanceTable.innerHTML += `<tr>
+            <td>${item.empId}</td>
+            <td>${item.email}</td>
+            <td><span class="status-badge present">${item.status}</span></td>
+        </tr>`;
+    });
 }
