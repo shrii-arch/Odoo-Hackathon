@@ -1,8 +1,28 @@
-// --- CENTRAL LOCAL STORAGE INITIALIZATION ENGINE ---
+// --- CENTRAL STATE & DATA STORAGE SEEDS ---
 if (!localStorage.getItem('hrms_users')) {
     localStorage.setItem('hrms_users', JSON.stringify([
-        { email: "emp@odoo.com", password: "Password123", role: "Employee", empId: "EMP01" },
-        { email: "hr@odoo.com", password: "Password123", role: "HR", empId: "HR01" }
+        { 
+            email: "emp@odoo.com", 
+            password: "Password123", 
+            role: "Employee", 
+            empId: "EMP01", 
+            phone: "+91 98765 43210", 
+            address: "Kolkata, West Bengal", 
+            job: "Junior Software Engineer", 
+            salary: "₹65,000 / month",
+            documents: "Aadhar_Card.pdf, Offer_Letter.pdf"
+        },
+        { 
+            email: "hr@odoo.com", 
+            password: "Password123", 
+            role: "HR", 
+            empId: "HR01", 
+            phone: "+91 99999 88888", 
+            address: "New Town, Kolkata", 
+            job: "Lead HR Specialist", 
+            salary: "₹90,000 / month",
+            documents: "NDA_Agreement.pdf"
+        }
     ]));
 }
 if (!localStorage.getItem('hrms_attendance')) {
@@ -12,7 +32,7 @@ if (!localStorage.getItem('hrms_attendance')) {
 let isSignUpMode = false;
 let currentUser = null;
 
-// Element Layout Selectors Matrix
+// Complete Selector Mappings Object
 const UI = {
     authSection: document.getElementById('authSection'),
     employeeDashboard: document.getElementById('employeeDashboard'),
@@ -24,15 +44,44 @@ const UI = {
     empIdGroup: document.getElementById('empIdGroup'),
     roleGroup: document.getElementById('roleGroup'),
     userStatus: document.getElementById('userStatus'),
-    empEmailDisplay: document.getElementById('empEmailDisplay'),
-    todayStatus: document.getElementById('todayStatus'),
+    
+    // Employee View Profile Management Elements
+    lblEmpId: document.getElementById('lblEmpId'),
+    lblEmail: document.getElementById('lblEmail'),
+    lblPhone: document.getElementById('lblPhone'),
+    lblAddress: document.getElementById('lblAddress'),
+    lblJob: document.getElementById('lblJob'),
+    lblSalary: document.getElementById('lblSalary'),
+    lblDocs: document.getElementById('lblDocs'),
+    profileViewMode: document.getElementById('profileViewMode'),
+    profileEditForm: document.getElementById('profileEditForm'),
+    
+    // Employee Forms
+    txtPhone: document.getElementById('txtPhone'),
+    txtAddress: document.getElementById('txtAddress'),
+    btnTriggerEdit: document.getElementById('btnTriggerEdit'),
+    btnCancelEdit: document.getElementById('btnCancelEdit'),
+
+    // Admin Panel Override Fields
+    adminEmployeeSelector: document.getElementById('adminEmployeeSelector'),
+    adminMasterEditForm: document.getElementById('adminMasterEditForm'),
+    admEmpId: document.getElementById('admEmpId'),
+    admPhone: document.getElementById('admPhone'),
+    admAddress: document.getElementById('admAddress'),
+    admJob: document.getElementById('admJob'),
+    admSalary: document.getElementById('admSalary'),
+    admDocs: document.getElementById('admDocs'),
+
+    // Attendance Layout Setup
+    attendanceStatusType: document.getElementById('attendanceStatusType'),
     checkInBtn: document.getElementById('checkInBtn'),
     checkOutBtn: document.getElementById('checkOutBtn'),
     myAttendanceTable: document.getElementById('myAttendanceTable'),
-    adminAttendanceTable: document.getElementById('adminAttendanceTable')
+    adminAttendanceTable: document.getElementById('adminAttendanceTable'),
+    employeeActivityFeed: document.getElementById('employeeActivityFeed')
 };
 
-// Interface Switcher (Sign In vs Sign Up Screen)
+// Interface Switcher Utility
 UI.toggleLink.addEventListener('click', () => {
     isSignUpMode = !isSignUpMode;
     UI.authTitle.innerText = isSignUpMode ? "Register Account" : "Sign In";
@@ -42,22 +91,22 @@ UI.toggleLink.addEventListener('click', () => {
     clearValidationEffects();
 });
 
-// Input Validator Framework
+// Input Verification Engine
 function runInputValidation(email, password, empId) {
     let isValid = true;
     clearValidationEffects();
 
     const emailFormat = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailFormat.test(email)) {
-        triggerFieldInvalid('email', 'Please provide a valid corporate email structure.');
+        triggerFieldInvalid('email', 'Please enter a valid corporate email address.');
         isValid = false;
     }
     if (password.length < 5) {
-        triggerFieldInvalid('password', 'Security rule: Minimum 5 characters required.');
+        triggerFieldInvalid('password', 'Password must be at least 5 characters long.');
         isValid = false;
     }
     if (isSignUpMode && !empId.trim()) {
-        triggerFieldInvalid('empId', 'Operational rule: Employee ID is mandatory.');
+        triggerFieldInvalid('empId', 'Employee ID configuration is required.');
         isValid = false;
     }
     return isValid;
@@ -70,14 +119,14 @@ function triggerFieldInvalid(fieldId, msg) {
 
 function clearValidationEffects() {
     ['email', 'password', 'empId'].forEach(id => {
-        const inputField = document.getElementById(id);
-        if (inputField) inputField.classList.remove('invalid');
+        const field = document.getElementById(id);
+        if (field) field.classList.remove('invalid');
         const textLabel = document.getElementById(`${id}Error`);
         if (textLabel) textLabel.innerText = '';
     });
 }
 
-// Session Authentication Form Submission
+// Global Authentication Process
 UI.authForm.addEventListener('submit', (e) => {
     e.preventDefault();
     const email = document.getElementById('email').value.trim();
@@ -91,32 +140,203 @@ UI.authForm.addEventListener('submit', (e) => {
 
     if (isSignUpMode) {
         if (dbUsers.some(u => u.email === email)) {
-            triggerFieldInvalid('email', 'This email identity matches an existing profile.');
+            triggerFieldInvalid('email', 'Profile with this email already exists.');
             return;
         }
-        dbUsers.push({ email, password, role, empId });
+        dbUsers.push({ 
+            email, password, role, empId, 
+            phone: "Not Set", address: "Not Set", 
+            job: "Junior Developer", salary: "₹50,000 / month",
+            documents: "Registration_Form.pdf"
+        });
         localStorage.setItem('hrms_users', JSON.stringify(dbUsers));
-        alert("Registration successfully stored! Switching to login view.");
+        alert("Registration saved! Please sign in.");
         UI.toggleLink.click();
     } else {
-        const verifiedProfile = dbUsers.find(u => u.email === email && u.password === password);
-        if (verifiedProfile) {
-            currentUser = verifiedProfile;
-            UI.userStatus.innerText = `Active Session: ${currentUser.email}`;
+        const userMatch = dbUsers.find(u => u.email === email && u.password === password);
+        if (userMatch) {
+            currentUser = userMatch;
+            UI.userStatus.innerText = `Session: ${currentUser.email}`;
             UI.authSection.style.display = "none";
             
             if (currentUser.role === "Employee") {
-                launchEmployeeView();
+                launchEmployeePortal();
             } else {
-                launchAdminView();
+                launchAdminPortal();
             }
         } else {
-            alert("Security exception: Access denied. Verification mismatch.");
+            alert("Authentication Failure: Invalid credentials match.");
         }
     }
 });
 
-// Logout Reset Module
+// 3.3.2 EMPLOYEE PROFILE EDIT (Limited Fields)
+UI.btnTriggerEdit.addEventListener('click', () => {
+    UI.txtPhone.value = currentUser.phone || '';
+    UI.txtAddress.value = currentUser.address || '';
+    UI.profileViewMode.style.display = "none";
+    UI.profileEditForm.style.display = "block";
+});
+
+UI.btnCancelEdit.addEventListener('click', () => {
+    UI.profileViewMode.style.display = "block";
+    UI.profileEditForm.style.display = "none";
+});
+
+UI.profileEditForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    let dbUsers = JSON.parse(localStorage.getItem('hrms_users'));
+    let userIdx = dbUsers.findIndex(u => u.email === currentUser.email);
+    
+    if (userIdx !== -1) {
+        dbUsers[userIdx].phone = UI.txtPhone.value.trim();
+        dbUsers[userIdx].address = UI.txtAddress.value.trim();
+        
+        currentUser = dbUsers[userIdx];
+        localStorage.setItem('hrms_users', JSON.stringify(dbUsers));
+        
+        renderProfilePanel();
+        pushActivityLog("Profile phone and address updated.");
+        UI.btnCancelEdit.click();
+    }
+});
+
+function renderProfilePanel() {
+    UI.lblEmpId.innerText = currentUser.empId || "N/A";
+    UI.lblEmail.innerText = currentUser.email;
+    UI.lblPhone.innerText = currentUser.phone || "Not Set";
+    UI.lblAddress.innerText = currentUser.address || "Not Set";
+    UI.lblJob.innerText = currentUser.job || "Corporate Specialist";
+    UI.lblSalary.innerText = currentUser.salary || "₹75,000 / month";
+    UI.lblDocs.innerText = currentUser.documents || "No Documents Uploaded";
+}
+
+// 3.3.2 ADMINISTRATIVE MASTER OVERRIDE HUB (Can Edit All Details)
+function setupAdminProfileEditor() {
+    let dbUsers = JSON.parse(localStorage.getItem('hrms_users'));
+    UI.adminEmployeeSelector.innerHTML = "";
+    
+    let employeesOnly = dbUsers.filter(u => u.role === "Employee");
+    
+    if (employeesOnly.length === 0) {
+        UI.adminEmployeeSelector.innerHTML = "<option>No employees found</option>";
+        return;
+    }
+    
+    employeesOnly.forEach(emp => {
+        UI.adminEmployeeSelector.innerHTML += `<option value="${emp.email}">${emp.empId} - ${emp.email}</option>`;
+    });
+
+    UI.adminEmployeeSelector.addEventListener('change', populateAdminOverrideFields);
+    populateAdminOverrideFields();
+}
+
+function populateAdminOverrideFields() {
+    let dbUsers = JSON.parse(localStorage.getItem('hrms_users'));
+    let targetEmail = UI.adminEmployeeSelector.value;
+    let match = dbUsers.find(u => u.email === targetEmail);
+    
+    if (match) {
+        UI.admEmpId.value = match.empId || "";
+        UI.admPhone.value = match.phone || "";
+        UI.admAddress.value = match.address || "";
+        UI.admJob.value = match.job || "";
+        UI.admSalary.value = match.salary || "";
+        UI.admDocs.value = match.documents || "";
+    }
+}
+
+UI.adminMasterEditForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    let dbUsers = JSON.parse(localStorage.getItem('hrms_users'));
+    let targetEmail = UI.adminEmployeeSelector.value;
+    let idx = dbUsers.findIndex(u => u.email === targetEmail);
+    
+    if (idx !== -1) {
+        // Admin updates absolutely ALL parameters comprehensively
+        dbUsers[idx].empId = UI.admEmpId.value.trim();
+        dbUsers[idx].phone = UI.admPhone.value.trim();
+        dbUsers[idx].address = UI.admAddress.value.trim();
+        dbUsers[idx].job = UI.admJob.value.trim();
+        dbUsers[idx].salary = UI.admSalary.value.trim();
+        dbUsers[idx].documents = UI.admDocs.value.trim();
+        
+        localStorage.setItem('hrms_users', JSON.stringify(dbUsers));
+        alert(`Admin Success: All fields for ${targetEmail} have been fully overridden.`);
+        setupAdminProfileEditor(); // Refresh selector display options
+    }
+});
+
+function pushActivityLog(textMessage) {
+    const timeStamp = new Date().toLocaleTimeString();
+    UI.employeeActivityFeed.innerHTML = `<li class="activity-item">⏱️ [${timeStamp}] ${textMessage}</li>` + UI.employeeActivityFeed.innerHTML;
+}
+
+// 3.4 ATTENDANCE TRACKING
+UI.checkInBtn.addEventListener('click', () => {
+    const todayStr = new Date().toISOString().split('T')[0];
+    const requestedStatus = UI.attendanceStatusType.value;
+    let records = JSON.parse(localStorage.getItem('hrms_attendance'));
+    
+    records.push({
+        date: todayStr,
+        status: requestedStatus,
+        empId: currentUser.empId || "N/A",
+        email: currentUser.email
+    });
+    
+    localStorage.setItem('hrms_attendance', JSON.stringify(records));
+    pushActivityLog(`Clock-in registered successfully as: [${requestedStatus}]`);
+    UI.checkInBtn.disabled = true;
+    UI.checkOutBtn.disabled = false;
+    renderEmployeeTables();
+});
+
+UI.checkOutBtn.addEventListener('click', () => {
+    pushActivityLog(`Clock-out sequence executed successfully.`);
+    UI.checkInBtn.disabled = false;
+    UI.checkOutBtn.disabled = true;
+});
+
+function renderEmployeeTables() {
+    UI.myAttendanceTable.innerHTML = "";
+    let logs = JSON.parse(localStorage.getItem('hrms_attendance'));
+    const matchedLogs = logs.filter(log => log.email === currentUser.email);
+    
+    matchedLogs.forEach(item => {
+        let badgeClass = item.status.toLowerCase().replace(' ', '-');
+        UI.myAttendanceTable.innerHTML += `<tr>
+            <td>${item.date}</td>
+            <td><span class="status-badge ${badgeClass}">${item.status}</span></td>
+        </tr>`;
+    });
+}
+
+// MASTER DASHBOARD VIEW REVEALS
+function launchEmployeePortal() {
+    UI.employeeDashboard.style.display = "block";
+    renderProfilePanel();
+    renderEmployeeTables();
+}
+
+function launchAdminPortal() {
+    UI.adminDashboard.style.display = "block";
+    setupAdminProfileEditor();
+    UI.adminAttendanceTable.innerHTML = "";
+    let logs = JSON.parse(localStorage.getItem('hrms_attendance'));
+    
+    logs.forEach(item => {
+        let badgeClass = item.status.toLowerCase().replace(' ', '-');
+        UI.adminAttendanceTable.innerHTML += `<tr>
+            <td><strong>${item.empId}</strong></td>
+            <td>${item.email}</td>
+            <td>${item.date}</td>
+            <td><span class="status-badge ${badgeClass}">${item.status}</span></td>
+        </tr>`;
+    });
+}
+
+// Logout Engine
 document.querySelectorAll('.logoutBtn').forEach(btn => {
     btn.addEventListener('click', () => {
         currentUser = null;
@@ -128,57 +348,3 @@ document.querySelectorAll('.logoutBtn').forEach(btn => {
         clearValidationEffects();
     });
 });
-
-// Employee Workspace Execution
-function launchEmployeeView() {
-    UI.employeeDashboard.style.display = "block";
-    UI.empEmailDisplay.innerText = currentUser.email;
-    renderEmployeeLogs();
-}
-
-UI.checkInBtn.addEventListener('click', () => {
-    const todayStr = new Date().toISOString().split('T')[0];
-    let attendanceLogs = JSON.parse(localStorage.getItem('hrms_attendance'));
-    
-    attendanceLogs.push({
-        date: todayStr,
-        status: "Present",
-        empId: currentUser.empId || "N/A",
-        email: currentUser.email
-    });
-    
-    localStorage.setItem('hrms_attendance', JSON.stringify(attendanceLogs));
-    UI.todayStatus.innerText = "Present";
-    UI.todayStatus.className = "status-badge present";
-    UI.checkInBtn.disabled = true;
-    UI.checkOutBtn.disabled = false;
-    renderEmployeeLogs();
-});
-
-function renderEmployeeLogs() {
-    UI.myAttendanceTable.innerHTML = "";
-    let attendanceLogs = JSON.parse(localStorage.getItem('hrms_attendance'));
-    const matchedLogs = attendanceLogs.filter(log => log.email === currentUser.email);
-    
-    matchedLogs.forEach(item => {
-        UI.myAttendanceTable.innerHTML += `<tr>
-            <td>${item.date}</td>
-            <td><span class="status-badge present">${item.status}</span></td>
-        </tr>`;
-    });
-}
-
-// Admin Workspace Execution
-function launchAdminView() {
-    UI.adminDashboard.style.display = "block";
-    UI.adminAttendanceTable.innerHTML = "";
-    let attendanceLogs = JSON.parse(localStorage.getItem('hrms_attendance'));
-    
-    attendanceLogs.forEach(item => {
-        UI.adminAttendanceTable.innerHTML += `<tr>
-            <td>${item.empId}</td>
-            <td>${item.email}</td>
-            <td><span class="status-badge present">${item.status}</span></td>
-        </tr>`;
-    });
-}

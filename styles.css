@@ -1,4 +1,6 @@
-/* Modern Layout Base & Clean Typography */
+/* ==========================================================================
+   1. CORE DESIGN THEME & TYPOGRAPHY
+   ========================================================================== */
 * {
     margin: 0;
     padding: 0;
@@ -10,11 +12,11 @@ body {
     background-color: #f6f8fa;
     color: #2c3e50;
     line-height: 1.5;
+    padding-bottom: 4rem;
 }
 
-/* Odoo Professional Navigation Bar */
 .navbar {
-    background-color: #714B67; /* Classic Odoo Theme color */
+    background-color: #714B67; /* Official Odoo Deep Purple */
     color: #ffffff;
     padding: 1.1rem 3rem;
     display: flex;
@@ -23,36 +25,37 @@ body {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
-.logo {
-    font-size: 1.5rem;
-    font-weight: 700;
+.logo { 
+    font-size: 1.5rem; 
+    font-weight: 700; 
 }
 
 .sub-logo {
-    font-size: 0.8rem;
+    font-size: 0.8rem; 
     font-weight: 400;
     background: rgba(255, 255, 255, 0.2);
-    padding: 3px 8px;
-    border-radius: 4px;
+    padding: 3px 8px; 
+    border-radius: 4px; 
     margin-left: 4px;
 }
 
 .user-status {
-    font-size: 0.9rem;
+    font-size: 0.9rem; 
     background: rgba(0, 0, 0, 0.15);
-    padding: 6px 14px;
+    padding: 6px 14px; 
     border-radius: 20px;
     border: 1px solid rgba(255, 255, 255, 0.25);
 }
 
-/* Master Layout Framework */
 .container {
-    max-width: 1140px;
-    margin: 3.5rem auto;
+    max-width: 1200px;
+    margin: 3rem auto;
     padding: 0 1.5rem;
 }
 
-/* Clean, Spacious Elevation Cards */
+/* ==========================================================================
+   2. ELEVATED CARD PLACEMENTS
+   ========================================================================== */
 .card {
     background: #ffffff;
     border-radius: 12px;
@@ -62,207 +65,246 @@ body {
     border: 1px solid #eaeef2;
 }
 
-.main-auth-card {
-    max-width: 480px;
-    margin: 0 auto;
+.main-auth-card { 
+    max-width: 480px; 
+    margin: 0 auto; 
 }
 
-.card h2 {
-    font-size: 1.6rem;
-    margin-bottom: 1.75rem;
-    color: #1a252f;
-    text-align: center;
+.card h2 { 
+    font-size: 1.6rem; 
+    margin-bottom: 1.75rem; 
+    color: #1a252f; 
+    text-align: center; 
 }
 
-.card h3 {
-    font-size: 1.25rem;
-    margin-bottom: 1rem;
-    color: #2c3e50;
+.card h3 { 
+    font-size: 1.25rem; 
+    margin-bottom: 1.25rem; 
+    color: #2c3e50; 
+    border-bottom: 1px solid #f2f4f7; 
+    padding-bottom: 0.5rem; 
 }
 
-/* Multi-Column Grid System */
 .grid-layout {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
     gap: 2rem;
     margin-bottom: 2rem;
 }
 
-.panel-card {
-    position: relative;
-    padding-top: 3rem;
+.panel-card { 
+    position: relative; 
+    padding-top: 3rem; 
 }
 
 .card-title-tag {
-    position: absolute;
-    top: 1rem;
+    position: absolute; 
+    top: 1rem; 
     left: 2.25rem;
-    font-size: 0.75rem;
+    font-size: 0.75rem; 
     text-transform: uppercase;
-    font-weight: 700;
-    letter-spacing: 0.5px;
+    font-weight: 700; 
+    letter-spacing: 0.5px; 
     color: #95a5a6;
 }
 
-/* Form Styling & Input Validations */
-.form-group {
-    margin-bottom: 1.25rem;
+/* ==========================================================================
+   3. FORM LAYOUT CONTROLS
+   ========================================================================== */
+.form-group { 
+    margin-bottom: 1.25rem; 
 }
 
-label {
-    display: block;
-    margin-bottom: 0.45rem;
-    font-weight: 600;
-    font-size: 0.88rem;
-    color: #34495e;
+label { 
+    display: block; 
+    margin-bottom: 0.45rem; 
+    font-weight: 600; 
+    font-size: 0.88rem; 
+    color: #34495e; 
 }
 
-input, select {
-    width: 100%;
-    padding: 0.75rem 1rem;
+input, select, textarea {
+    width: 100%; 
+    padding: 0.75rem 1rem; 
     border: 1.5px solid #dcdfe6;
-    border-radius: 8px;
-    font-size: 0.95rem;
-    color: #2c3e50;
-    transition: all 0.2s ease-in-out;
+    border-radius: 8px; 
+    font-size: 0.95rem; 
+    color: #2c3e50; 
+    transition: all 0.2s;
 }
 
-input:focus, select:focus {
-    border-color: #714B67;
-    outline: none;
+input:focus, select:focus, textarea:focus {
+    border-color: #714B67; 
+    outline: none; 
     box-shadow: 0 0 0 3px rgba(113, 75, 103, 0.1);
 }
 
-input.invalid {
-    border-color: #e74c3c;
-    background-color: #fdf2f2;
+input.invalid, select.invalid { 
+    border-color: #e74c3c; 
+    background-color: #fdf2f2; 
 }
 
-.error-msg {
-    color: #e74c3c;
-    font-size: 0.78rem;
-    margin-top: 0.35rem;
-    display: block;
-    font-weight: 500;
+.error-msg { 
+    color: #e74c3c; 
+    font-size: 0.78rem; 
+    margin-top: 0.35rem; 
+    display: block; 
+    font-weight: 500; 
 }
 
-/* Unified Action Buttons */
+/* ==========================================================================
+   4. SYSTEM BUTTONS
+   ========================================================================== */
 .btn {
-    padding: 0.75rem 1.5rem;
-    border: none;
+    padding: 0.75rem 1.5rem; 
+    border: none; 
     border-radius: 8px;
-    font-weight: 600;
-    font-size: 0.95rem;
+    font-weight: 600; 
+    font-size: 0.95rem; 
     cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+    display: inline-flex; 
+    align-items: center; 
+    justify-content: center; 
     transition: all 0.2s ease;
 }
 
-.btn:active { transform: scale(0.98); }
-.btn-primary { background-color: #714B67; color: #ffffff; }
-.btn-primary:hover { background-color: #5b3c53; }
-.btn-full { width: 100%; margin-top: 0.75rem; }
-
-.btn-success { background-color: #2ecc71; color: #ffffff; }
-.btn-success:hover { background-color: #27ae60; }
-.btn-secondary { background-color: #bdc3c7; color: #2c3e50; }
-.btn-danger { background-color: #e74c3c; color: #ffffff; }
-.btn-danger:hover { background-color: #c0392b; }
-
-.btn:disabled {
-    background-color: #e8ecf0;
-    color: #95a5a6;
-    cursor: not-allowed;
-    transform: none;
+.btn:active { 
+    transform: scale(0.98); 
 }
 
-.button-group {
-    display: flex;
-    gap: 1rem;
-    margin-top: 1.5rem;
+.btn-primary { 
+    background-color: #714B67; 
+    color: #ffffff; 
 }
 
-/* Form Toggling Utilities */
-.toggle-text {
-    text-align: center;
-    margin-top: 1.5rem;
-    font-size: 0.9rem;
-    color: #7f8c8d;
+.btn-primary:hover { 
+    background-color: #5b3c53; 
 }
 
-.toggle-text span {
-    color: #714B67;
-    cursor: pointer;
-    font-weight: 600;
-    text-decoration: underline;
+.btn-full { 
+    width: 100%; 
+    margin-top: 0.75rem; 
 }
 
-/* Beautiful Clean Tables */
-.table-card {
-    padding: 1.5rem 2.25rem;
+.btn-success { 
+    background-color: #2ecc71; 
+    color: #ffffff; 
 }
 
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 0.75rem;
+.btn-secondary { 
+    background-color: #bdc3c7; 
+    color: #2c3e50; 
 }
 
-th, td {
-    padding: 1.1rem 1rem;
-    text-align: left;
-    border-bottom: 1px solid #edf2f7;
+.btn-danger { 
+    background-color: #e74c3c; 
+    color: #ffffff; 
 }
 
-th {
-    background-color: #f8fafc;
-    font-weight: 600;
-    color: #7f8c8d;
-    font-size: 0.85rem;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+.btn-sm { 
+    padding: 0.4rem 0.8rem; 
+    font-size: 0.85rem; 
+    border-radius: 6px; 
 }
 
-td {
-    font-size: 0.95rem;
+.btn:disabled { 
+    background-color: #e8ecf0; 
+    color: #95a5a6; 
+    cursor: not-allowed; 
 }
 
-/* Colored Status Badges */
-.status-badge {
-    padding: 0.4rem 0.9rem;
-    border-radius: 20px;
-    font-size: 0.8rem;
-    font-weight: 700;
-    display: inline-block;
+.button-group { 
+    display: flex; 
+    gap: 1rem; 
+    margin-top: 1.5rem; 
 }
+
+.toggle-text { 
+    text-align: center; 
+    margin-top: 1.5rem; 
+    font-size: 0.9rem; 
+    color: #7f8c8d; 
+}
+
+.toggle-text span { 
+    color: #714B67; 
+    cursor: pointer; 
+    font-weight: 600; 
+    text-decoration: underline; 
+}
+
+/* ==========================================================================
+   5. DATA TABLES & FEEDS
+   ========================================================================== */
+table { 
+    width: 100%; 
+    border-collapse: collapse; 
+    margin-top: 0.75rem; 
+}
+
+th, td { 
+    padding: 1.1rem 1rem; 
+    text-align: left; 
+    border-bottom: 1px solid #edf2f7; 
+}
+
+th { 
+    background-color: #f8fafc; 
+    font-weight: 600; 
+    color: #7f8c8d; 
+    font-size: 0.85rem; 
+    text-transform: uppercase; 
+}
+
+td { 
+    font-size: 0.95rem; 
+}
+
+/* Status Badges Matrix */
+.status-badge { 
+    padding: 0.4rem 0.9rem; 
+    border-radius: 20px; 
+    font-size: 0.8rem; 
+    font-weight: 700; 
+    display: inline-block; 
+}
+
 .present { background-color: #edfbf2; color: #2ecc71; }
 .absent { background-color: #fdf2f2; color: #e74c3c; }
+.half-day { background-color: #fef9e7; color: #f39c12; }
+.leave { background-color: #ebf5fb; color: #3498db; }
 
-/* Dashboard Headers */
-.dashboard-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 2.5rem;
-    padding-bottom: 1rem;
-    border-bottom: 2px solid #edf2f7;
+.dashboard-header { 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    margin-bottom: 2.5rem; 
+    padding-bottom: 1rem; 
+    border-bottom: 2px solid #edf2f7; 
 }
 
-.dashboard-header h2 {
-    font-size: 1.75rem;
-    color: #1a252f;
+.dashboard-header h2 { 
+    font-size: 1.75rem; 
+    color: #1a252f; 
 }
 
-.meta-item {
-    margin-top: 0.65rem;
-    font-size: 0.98rem;
-    color: #4f5f6f;
+.meta-item { 
+    margin-top: 0.65rem; 
+    font-size: 0.95rem; 
+    color: #4f5f6f; 
 }
 
-.status-line {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
+.activity-feed { 
+    list-style: none; 
+}
+
+.activity-item { 
+    padding: 0.65rem 0; 
+    border-bottom: 1px dashed #e9ecef; 
+    font-size: 0.9rem; 
+    color: #555; 
+}
+
+.activity-item:last-child { 
+    border-bottom: none; 
 }
