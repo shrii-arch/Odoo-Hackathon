@@ -66,7 +66,6 @@
                         <p class="meta-item"><strong>Job Details:</strong> <span id="lblJob"></span></p>
                         <p class="meta-item"><strong>Salary Structure:</strong> <span id="lblSalary"></span></p>
                         <p class="meta-item"><strong>Verified Documents:</strong> <span id="lblDocs"></span></p>
-                        
                         <button id="btnTriggerEdit" class="btn btn-primary btn-sm" style="margin-top: 1.25rem;">Edit Profile Details</button>
                     </div>
 
@@ -106,6 +105,53 @@
             </div>
 
             <div class="grid-layout">
+                <div class="card panel-card">
+                    <div class="card-title-tag">3.5 Leave Request Gateway</div>
+                    <h3>Apply for Time-Off</h3>
+                    <form id="leaveApplicationForm" style="margin-top: 1rem;">
+                        <div class="form-group">
+                            <label for="leaveType">Leave Classification Category</label>
+                            <select id="leaveType">
+                                <option value="Paid">Paid Leave</option>
+                                <option value="Sick">Sick Leave</option>
+                                <option value="Unpaid">Unpaid Leave</option>
+                            </select>
+                        </div>
+                        <div style="display: flex; gap: 1rem;">
+                            <div class="form-group" style="flex: 1;">
+                                <label for="leaveStartDate">Start Date</label>
+                                <input type="date" id="leaveStartDate" required>
+                            </div>
+                            <div class="form-group" style="flex: 1;">
+                                <label for="leaveEndDate">End Date</label>
+                                <input type="date" id="leaveEndDate" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="leaveRemarks">Employee Remarks / Reasons</label>
+                            <textarea id="leaveRemarks" rows="2" placeholder="Provide contextual summary..."></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-full">Submit Time-Off Request</button>
+                    </form>
+                </div>
+
+                <div class="card">
+                    <h3>My Submitted Leave Status History</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Classification</th>
+                                <th>Duration Window</th>
+                                <th>Status Code</th>
+                                <th>Admin Response Comments</th>
+                            </tr>
+                        </thead>
+                        <tbody id="myLeaveStatusTable"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="grid-layout">
                 <div class="card table-card">
                     <h3>My Attendance Logs Matrix</h3>
                     <table>
@@ -132,6 +178,23 @@
             <div class="dashboard-header">
                 <h2>Admin Management Terminal</h2>
                 <button class="btn btn-danger logoutBtn">Logout</button>
+            </div>
+
+            <div class="card" style="margin-bottom: 2rem;">
+                <h3>Incoming Employee Leave & Time-Off Requests Pipeline</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>User ID</th>
+                            <th>Leave Type</th>
+                            <th>Requested Dates</th>
+                            <th>Employee Reason</th>
+                            <th>Status Action Panel</th>
+                            <th>Administrative Comments / Feedback</th>
+                        </tr>
+                    </thead>
+                    <tbody id="adminLeaveApprovalTable"></tbody>
+                </table>
             </div>
 
             <div class="grid-layout" style="grid-template-columns: 1fr;">
