@@ -114,6 +114,11 @@ function renderAdminDashboard() {
                 <p><strong>Staff ID:</strong> ${emp.empId} | <strong>Email:</strong> ${emp.email}</p>
                 <p class="sub-text">Phone: ${emp.phone || "Not Specified"} | Address: ${emp.address || "Not Specified"}</p>
             </div>
+            <div class="admin-edit-controls">
+                <input type="text" id="admin-phone-${emp.empId}" placeholder="Modify Phone" value="${emp.phone || ""}">
+                <input type="text" id="admin-address-${emp.empId}" placeholder="Modify Address" value="${emp.address || ""}">
+                <button onclick="adminModifyUser('${emp.empId}')" class="admin-action-btn">Force Update</button>
+            </div>
         `;
         listContainer.appendChild(row);
     });
@@ -144,4 +149,24 @@ function logout() {
     document.getElementById('employee-container').style.display = 'none';
     document.getElementById('admin-container').style.display = 'none';
     document.getElementById('auth-container').style.display = 'block';
+}
+// 9. ADMIN PROFILE OVERRIDEPRIVILEGES (Section 3.3.2)
+function adminModifyUser(empId) {
+    const newPhone = document.getElementById(`admin-phone-${empId}`).value;
+    const newAddress = document.getElementById(`admin-address-${empId}`).value;
+
+    // Find the targeted employee in the database array
+    const index = users.findIndex(user => user.empId === empId);
+    if (index !== -1) {
+        // Apply the Admin's forced changes
+        users[index].phone = newPhone;
+        users[index].address = newAddress;
+        
+        // Save back to browser disk storage
+        localStorage.setItem('users', JSON.stringify(users));
+        alert(`Administrative Override: Profile for Staff ID ${empId} has been updated.`);
+        
+        // Refresh the admin interface to show the new changes immediately
+        renderAdminDashboard();
+    }
 }
