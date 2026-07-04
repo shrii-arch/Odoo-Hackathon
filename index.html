@@ -151,6 +151,38 @@
                 </div>
             </div>
 
+            <div class="grid-layout" style="grid-template-columns: 1fr;">
+                <div class="card">
+                    <div class="card-title-tag">3.6 Payroll Gateway</div>
+                    <h3>My Earnings & Compensation Statement</h3>
+                    <div class="table-card" style="margin-top: 1rem;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Base Structure Assignment</th>
+                                    <th>Statutory Allowances</th>
+                                    <th>Taxation/Deductions</th>
+                                    <th>Net Take-Home Pay</th>
+                                    <th>Status Verification</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><span id="payBase" style="font-weight: 600;">₹0</span></td>
+                                    <td><span>₹5,500 (HRA + Conveyance)</span></td>
+                                    <td><span style="color: #c0392b;">- ₹3,200 (PF & Professional Tax)</span></td>
+                                    <td><span id="payNet" style="color: #27ae60; font-weight: bold;">₹0</span></td>
+                                    <td><span class="status-badge present">Verified & Released</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p style="font-size: 0.85rem; color: #7f8c8d; margin-top: 0.75rem; font-style: italic;">
+                        Notice: This distribution statement is read-only. For structural discrepancies, contact HR administration.
+                    </p>
+                </div>
+            </div>
+
             <div class="grid-layout">
                 <div class="card table-card">
                     <h3>My Attendance Logs Matrix</h3>
@@ -168,7 +200,7 @@
                 <div class="card">
                     <h3>System Live Notifications Feed</h3>
                     <ul class="activity-feed" id="employeeActivityFeed">
-                        <li class="activity-item">✨ Welcome to Odoo HRMS Portal! Sessions are monitored live.</li>
+                        <li class="activity-item"> Welcome to Odoo HRMS Portal! Sessions are monitored live.</li>
                     </ul>
                 </div>
             </div>
@@ -195,6 +227,25 @@
                     </thead>
                     <tbody id="adminLeaveApprovalTable"></tbody>
                 </table>
+            </div>
+
+            <div class="card" style="margin-bottom: 2rem;">
+                <div class="card-title-tag">3.6 Admin Payroll Registry</div>
+                <h3>Master Payroll Structural Controller</h3>
+                <div class="table-card" style="margin-top: 1rem;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Employee ID</th>
+                                <th>Email Address</th>
+                                <th>Assigned Title</th>
+                                <th>Current Base Structure Configuration</th>
+                                <th>Structural Controls / Modification Panel</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminPayrollControlTable"></tbody>
+                    </table>
+                </div>
             </div>
 
             <div class="grid-layout" style="grid-template-columns: 1fr;">
