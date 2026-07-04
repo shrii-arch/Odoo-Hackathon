@@ -56,12 +56,31 @@
         <div class="card main-content-card">
             <h3>My Profile Details</h3>
             <hr>
-            <div class="profile-details-display">
-                <p><strong>Employee ID Reference:</strong> <span id="prof-id"></span></p>
-                <p><strong>Registered Corporate Email:</strong> <span id="prof-email"></span></p>
+            <div class="profile-layout-wrapper">
+                <div class="profile-pic-container">
+                    <img id="prof-pic-display" src="https://via.placeholder.com/150" alt="Profile Picture" style="width:120px; height:120px; border-radius:50%; object-fit:cover; display:block; margin-bottom:10px;">
+                    <input type="text" id="prof-pic-url" placeholder="Paste image link URL" onchange="previewProfilePicture()">
+                </div>
+
+                <div class="profile-data-grid">
+                    <h4>📋 Personal & Job Details</h4>
+                    <p><strong>Full Name:</strong> <span id="prof-name"></span></p>
+                    <p><strong>Employee ID Reference:</strong> <span id="prof-id"></span></p>
+                    <p><strong>Corporate Email:</strong> <span id="prof-email"></span></p>
+                    <p><strong>Designation/Job Role:</strong> <span id="prof-job"></span></p>
+                    <p><strong>Assigned Department:</strong> <span id="prof-dept"></span></p>
+                    
+                    <h4>💰 Salary Structure (Read-Only)</h4>
+                    <p><strong>Base Salary:</strong> ₹<span id="prof-base-salary"></span></p>
+                    <p><strong>Allowances:</strong> ₹<span id="prof-allowance"></span></p>
+
+                    <h4>📂 Verified Documents</h4>
+                    <p id="prof-docs" class="badge text-neutral">✓ National ID Card, ✓ Academic Certificates</p>
+                </div>
             </div>
             
-            <form id="emp-profile-form" onsubmit="updateEmployeeProfile(event)">
+            <form id="emp-profile-form" onsubmit="updateEmployeeProfile(event)" style="margin-top: 20px;">
+                <h4>⚙️ Editable Fields</h4>
                 <div class="input-group">
                     <label for="prof-phone">Mobile Phone Number:</label>
                     <input type="text" id="prof-phone" placeholder="No phone number stored">
@@ -70,11 +89,11 @@
                     <label for="prof-address">Residential Address:</label>
                     <input type="text" id="prof-address" placeholder="No home address stored">
                 </div>
-                <button type="submit" class="action-btn">Save Local Modifications</button>
+                <button type="submit" class="action-btn">Save Profile Changes</button>
             </form>
         </div>
     </div>
-
+    
     <div id="admin-container" class="container" style="display: none;">
         <div class="header">
             <h2>Admin / HR Control Center</h2>

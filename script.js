@@ -36,6 +36,12 @@ function handleRegister(event) {
         email: email,
         password: password,
         role: role,
+        fullName: "Employee " + empId,
+        jobTitle: "Junior Associate",
+        department: "Operations",  
+        baseSalary: "35000",  
+        allowance: "5000",  
+        profilePic: "https://via.placeholder.com/150",
         phone: "",       
         address: "",     
         attendance: [], 
@@ -77,20 +83,33 @@ function handleLogin(event) {
     }
 }
 
-// 5. 3.2.1 EMPLOYEE VIEW RENDERING DATA LAYERS
 function renderEmployeeDashboard() {
     if (!currentUser) return;
 
-    // Set greeting strings
-    document.getElementById('emp-welcome-name').innerText = currentUser.empId;
+    // Set layout greeting banner text
+    document.getElementById('emp-welcome-name').innerText = currentUser.fullName || currentUser.empId;
     
-    // Mount profile data references onto form controls (Section 3.3 elements)
+    // Bind all the new Section 3.3 profile requirements to the text containers
+    document.getElementById('prof-name').innerText = currentUser.fullName || "Not Specified";
     document.getElementById('prof-id').innerText = currentUser.empId;
     document.getElementById('prof-email').innerText = currentUser.email;
+    document.getElementById('prof-job').innerText = currentUser.jobTitle || "Not Specified";
+    document.getElementById('prof-dept').innerText = currentUser.department || "Not Specified";
+    document.getElementById('prof-base-salary').innerText = currentUser.baseSalary || "0";
+    document.getElementById('prof-allowance').innerText = currentUser.allowance || "0";
+    
+    // Set editable components
     document.getElementById('prof-phone').value = currentUser.phone || "";
     document.getElementById('prof-address').value = currentUser.address || "";
+    document.getElementById('prof-pic-url').value = currentUser.profilePic || "";
+    document.getElementById('prof-pic-display').src = currentUser.profilePic || "https://via.placeholder.com/150";
 }
 
+// Quick image URL visual display trigger helper
+function previewProfilePicture() {
+    const url = document.getElementById('prof-pic-url').value;
+    document.getElementById('prof-pic-display').src = url || "https://via.placeholder.com/150";
+}
 // 6. 3.2.2 HR ADMIN VIEW RENDERING DATA LAYERS
 function renderAdminDashboard() {
     const listContainer = document.getElementById('admin-employee-list');
@@ -130,9 +149,11 @@ function updateEmployeeProfile(event) {
 
     const updatedPhone = document.getElementById('prof-phone').value;
     const updatedAddress = document.getElementById('prof-address').value;
+    const updatedProfilePic = document.getElementById('prof-pic-url').value;
 
     currentUser.phone = updatedPhone;
     currentUser.address = updatedAddress;
+    currentUser.profilePic = updatedProfilePic;
 
     const index = users.findIndex(user => user.empId === currentUser.empId);
     if (index !== -1) {
